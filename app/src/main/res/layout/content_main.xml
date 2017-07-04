@@ -9,26 +9,59 @@
     tools:context="com.example.android.musicmap.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabBackground="@color/colorPrimary"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/white">
 
-        //例子
-        <android.support.v4.view.PagerTitleStrip
-            android:id="@+id/pager_title_strip1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="top"
-            android:background="#33b5e5"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:textColor="#fff" />
+        <!--<android.support.design.widget.TabItem-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="0dp"-->
+            <!--android:text="@string/album"/>-->
+
+        <!--<android.support.design.widget.TabItem-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/artist"/>-->
+
+        <!--<android.support.design.widget.TabItem-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/song"-->
+            <!--android:layout_marginTop="1dp"/>-->
+
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="383dp"
+        android:layout_height="0dp"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <!--//例子-->
+        <!--<android.support.v4.view.PagerTitleStrip-->
+        <!--android:id="@+id/pager_title_strip1"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_gravity="top"-->
+        <!--android:background="#33b5e5"-->
+        <!--android:paddingBottom="4dp"-->
+        <!--android:paddingTop="4dp"-->
+        <!--android:textColor="#fff" />-->
 
 
     </android.support.v4.view.ViewPager>

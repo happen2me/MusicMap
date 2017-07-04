@@ -3,6 +3,9 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="album">Album</string>
+    <string name="artist">Artist</string>
+    <string name="song">Song</string>
 
     <string name="action_settings">Settings</string>
 </resources>
