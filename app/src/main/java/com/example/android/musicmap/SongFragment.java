@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.musicmap.dummy.DummyContent;
-import com.example.android.musicmap.dummy.DummyContent.DummyItem;
+import com.example.android.musicmap.Song;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,9 +25,11 @@ public class SongFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String ARG_SONGS = "songs";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private List<Song> mSongList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -38,10 +40,11 @@ public class SongFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static SongFragment newInstance(int columnCount) {
+    public static SongFragment newInstance(int columnCount, ArrayList<Song> songList) {
         SongFragment fragment = new SongFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putParcelableArrayList(ARG_SONGS, songList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,6 +55,7 @@ public class SongFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mSongList = getArguments().getParcelableArrayList(ARG_SONGS);
         }
     }
 
@@ -69,7 +73,7 @@ public class SongFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MySongRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MySongRecyclerViewAdapter(mSongList, mListener));
         }
         return view;
     }
@@ -104,6 +108,6 @@ public class SongFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Song item);
     }
 }

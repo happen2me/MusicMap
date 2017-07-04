@@ -1,28 +1,29 @@
 package com.example.android.musicmap;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.musicmap.SongFragment.OnListFragmentInteractionListener;
-import com.example.android.musicmap.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Song} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Song> mSongList;
     private final OnListFragmentInteractionListener mListener;
 
-    public MySongRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public MySongRecyclerViewAdapter(List<Song> songList, OnListFragmentInteractionListener listener) {
+        mSongList = songList;
         mListener = listener;
     }
 
@@ -35,9 +36,11 @@ public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mItem = mSongList.get(position);
+        Song song = mSongList.get(position);
+        holder.mCoverImage.setImageDrawable(Drawable.createFromPath(song.getCover()));
+        holder.mNameText.setText(song.getTitle());
+        holder.mArtistText.setText(song.getArtist());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,25 +56,27 @@ public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecycl
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mSongList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final ImageView mCoverImage;
+        public final TextView mNameText;
+        public final TextView mArtistText;
+        public Song mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mCoverImage = (ImageView) view.findViewById(R.id.song_cover);
+            mNameText = (TextView) view.findViewById(R.id.song_name);
+            mArtistText = (TextView) view.findViewById(R.id.song_artist);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" +  "MySongRecyclerViewAdapter'";
         }
     }
 }

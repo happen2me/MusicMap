@@ -1,5 +1,6 @@
 package com.example.android.musicmap;
 
+import com.example.android.musicmap.Album;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.musicmap.dummy.DummyContent;
-import com.example.android.musicmap.dummy.DummyContent.DummyItem;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A fragment representing a list of Items.
@@ -23,11 +23,13 @@ import java.util.List;
  */
 public class AlbumFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
+    // Done: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+    private static final String ARG_ALBUMS = "albums";
+    // Done: Customize parameters
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
+    private List<Album> mAlbumList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -36,12 +38,13 @@ public class AlbumFragment extends Fragment {
     public AlbumFragment() {
     }
 
-    // TODO: Customize parameter initialization
+    // Done: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static AlbumFragment newInstance(int columnCount) {
+    public static AlbumFragment newInstance(int columnCount, ArrayList<Album> albumList) {
         AlbumFragment fragment = new AlbumFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putParcelableArrayList(ARG_ALBUMS, albumList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,6 +55,7 @@ public class AlbumFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mAlbumList = getArguments().getParcelableArrayList(ARG_ALBUMS);
         }
     }
 
@@ -69,7 +73,7 @@ public class AlbumFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyAlbumRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyAlbumRecyclerViewAdapter(mAlbumList, mListener));
         }
         return view;
     }
@@ -103,7 +107,7 @@ public class AlbumFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        // Done: Update argument type and name
+        void onListFragmentInteraction(Album item);
     }
 }

@@ -17,8 +17,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.musicmap.Album;
+import com.example.android.musicmap.Artist;
+import com.example.android.musicmap.Song;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        AlbumFragment.OnListFragmentInteractionListener,
+        ArtistFragment.OnListFragmentInteractionListener,
+        SongFragment.OnListFragmentInteractionListener{
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolBar;
 
@@ -120,4 +127,17 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
     }
+
+    @Override
+    public void onListFragmentInteraction(Album item) {
+    }
+
+    @Override
+    public void onListFragmentInteraction(Artist item) {
+    }
+
+    @Override
+    public void onListFragmentInteraction(Song item) {
+    }
+
 }

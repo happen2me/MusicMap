@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.musicmap.dummy.DummyContent;
-import com.example.android.musicmap.dummy.DummyContent.DummyItem;
+import com.example.android.musicmap.Artist;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,8 +25,10 @@ public class ArtistFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String ARG_ARTISTS = "artists";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private List<Artist> mArtistList;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -38,10 +40,11 @@ public class ArtistFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ArtistFragment newInstance(int columnCount) {
+    public static ArtistFragment newInstance(int columnCount, ArrayList<Artist> artistArrayList) {
         ArtistFragment fragment = new ArtistFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putParcelableArrayList(ARG_ARTISTS, artistArrayList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,6 +55,7 @@ public class ArtistFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mArtistList = getArguments().getParcelableArrayList(ARG_ARTISTS);
         }
     }
 
@@ -69,7 +73,7 @@ public class ArtistFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyArtistRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyArtistRecyclerViewAdapter(getContext() ,mArtistList, mListener));
         }
         return view;
     }
@@ -104,6 +108,6 @@ public class ArtistFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Artist item);
     }
 }
