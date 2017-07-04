@@ -48,8 +48,8 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/tab_layout">
 
         <!--//例子-->
         <!--<android.support.v4.view.PagerTitleStrip-->

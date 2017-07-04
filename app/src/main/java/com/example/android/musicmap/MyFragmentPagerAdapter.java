@@ -16,10 +16,11 @@ import java.util.List;
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     private Context mContext;
     private List<Fragment> mFragments;
-    private String mTabTitles[] = new String[] {"Album", "Artist", "Song"};
+    private String mTabTitles[];
     public MyFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         mContext = context;
+        mTabTitles  = new String[] {mContext.getString(R.string.album), mContext.getString(R.string.artist), mContext.getString(R.string.song)};
         initFragments();
     }
 

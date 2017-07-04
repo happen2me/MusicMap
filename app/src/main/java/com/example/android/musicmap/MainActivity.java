@@ -51,12 +51,11 @@ public class MainActivity extends AppCompatActivity
         mDrawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         //初始化tabLayout
-        //initTabLayout();
+        initTabLayout();
     }
 
     @Override
