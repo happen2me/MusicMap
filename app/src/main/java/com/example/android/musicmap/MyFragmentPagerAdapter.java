@@ -1,9 +1,14 @@
 package com.example.android.musicmap;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -14,13 +19,13 @@ import java.util.List;
  */
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+    private String TAG = "MyFragmentPagerAdapter";
     private Context mContext;
     private List<Fragment> mFragments;
-    private String mTabTitles[];
+
     public MyFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         mContext = context;
-        mTabTitles  = new String[] {mContext.getString(R.string.album), mContext.getString(R.string.artist), mContext.getString(R.string.song)};
         initFragments();
     }
 
@@ -31,7 +36,20 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public Fragment getItem(int position) {
-        return mFragments.get(position);
+        switch (position){
+            case 0:
+                Log.d(TAG, "getItem: 0");
+                return AlbumFragment.newInstance(2, ReadMusic.getAlbums());
+            case 1:
+                Log.d(TAG, "getItem: 1");
+                return ArtistFragment.newInstance(1, ReadMusic.getArtists());
+            case 2:
+                Log.d(TAG, "getItem: 2");
+                return SongFragment.newInstance(1, ReadMusic.getSongList());
+            default:
+                Log.d(TAG, "Failed in getItem(int position)");
+                return mFragments.get(position);
+        }
     }
 
     /**
@@ -39,7 +57,7 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public int getCount() {
-        return mFragments.size();
+        return 3;
     }
 
     @Override
@@ -58,7 +76,17 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTabTitles[position];
+        switch (position) {
+            case 0:
+                return mContext.getString(R.string.album);
+            case 1:
+                return mContext.getString(R.string.artist);
+            case 2:
+                return mContext.getString(R.string.song);
+            default:
+                Log.d(TAG, "getPageTitle: BIGGER than 2");
+                return "FAILED";
+        }
     }
 
     private void initFragments(){

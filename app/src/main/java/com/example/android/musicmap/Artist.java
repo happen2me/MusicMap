@@ -12,6 +12,9 @@ public class Artist implements Parcelable{
     private int albumCount;
     private int songCount;
 
+    public Artist(){
+        super();
+    }
     public Artist(String name, int albumCount, int songCount) {
         this.name = name;
         this.albumCount = albumCount;
@@ -75,3 +78,4 @@ public class Artist implements Parcelable{
         }
     };
 }
+

@@ -10,12 +10,16 @@ import android.os.Parcelable;
 public class Album implements Parcelable{
     private String name;
     private String artist;
-    private int albumCoverImageId;
+    private String albumCover;
 
-    public Album(String name, String artist, int albumCoverImageId){
+    public Album(){
+        super();
+    }
+
+    public Album(String name, String artist, String albumCover){
         this.name = name;
         this.artist = artist;
-        this.albumCoverImageId = albumCoverImageId;
+        this.albumCover = albumCover;
     }
 
     public String getName() {
@@ -33,12 +37,12 @@ public class Album implements Parcelable{
         this.artist = artist;
     }
 
-    public int getAlbumCoverImageId() {
-        return albumCoverImageId;
+    public String getAlbumCover() {
+        return albumCover;
     }
 
-    public void setAlbumCoverImageId(int albumCoverImageId) {
-        this.albumCoverImageId = albumCoverImageId;
+    public void setAlbumCover(String albumCover) {
+        this.albumCover = albumCover;
     }
 
     /**
@@ -68,7 +72,7 @@ public class Album implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(artist);
-        dest.writeInt(albumCoverImageId);
+        dest.writeString(albumCover);
     }
 
     public static final Parcelable.Creator<Album> CREATOR
@@ -83,7 +87,7 @@ public class Album implements Parcelable{
          */
         @Override
         public Album createFromParcel(Parcel source) {
-            Album album = new Album(source.readString(),source.readString(),source.readInt());
+            Album album = new Album(source.readString(),source.readString(),source.readString());
             return album;
         }
 
@@ -92,3 +96,4 @@ public class Album implements Parcelable{
         }
     };
 }
+
