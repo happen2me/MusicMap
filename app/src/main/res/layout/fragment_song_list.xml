@@ -7,8 +7,6 @@
     android:name="com.example.android.musicmap.SongFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.android.musicmap.SongFragment"
     tools:listitem="@layout/fragment_song"/>
