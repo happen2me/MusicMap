@@ -1,5 +1,7 @@
 package com.example.android.musicmap;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.android.musicmap.SongFragment.OnListFragmentInteractionListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +22,12 @@ import java.util.List;
  */
 public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecyclerViewAdapter.ViewHolder> {
 
+    private Context mContext;
     private final List<Song> mSongList;
     private final OnListFragmentInteractionListener mListener;
 
-    public MySongRecyclerViewAdapter(List<Song> songList, OnListFragmentInteractionListener listener) {
+    public MySongRecyclerViewAdapter(Context context, List<Song> songList, OnListFragmentInteractionListener listener) {
+        mContext = context;
         mSongList = songList;
         mListener = listener;
     }
@@ -31,7 +36,19 @@ public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecycl
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_song, parent, false);
-        return new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: finish song listener
+                //TODO: 随便找位置写的，catch java.io.FileNotFoundException, 替换成默认专辑封面
+                Intent intent = new Intent(mContext, PlaybackService.class);
+                intent.putExtra("play_list",(ArrayList)mSongList);
+                intent.putExtra("play_start_position", holder.getAdapterPosition());
+                mContext.startService(intent);
+            }
+        });
+        return holder;
     }
 
     @Override

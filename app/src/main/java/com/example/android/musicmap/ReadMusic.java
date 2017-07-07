@@ -119,5 +119,59 @@ public class ReadMusic {
         Log.d(TAG, "DETECTED Artist " + artists.size());
         return artists;
     }
+
+    public static ArrayList<Song> querySongsInAlbum(String albumName){
+        Log.d(TAG, "Query Songs In an Album");
+        ArrayList<Song> songs = new ArrayList<>();
+        ContentResolver resolver = MyApplication.getContext().getContentResolver();
+        Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                android.provider.MediaStore.Audio.Media.ALBUM + "=?",
+                new String[] {albumName},
+                MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+        Map<Long, String> map = getCoverPathMap();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Song song = new Song();
+            song.setId(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
+            song.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
+            song.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
+            song.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
+            song.setUrl(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))); //路径
+            song.setDuration(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
+            song.setSize(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE)));
+            long albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
+            song.setCover(map.get(albumId));
+            songs.add(song);
+        }
+        cursor.close();
+        return songs;
+    }
+
+    public static ArrayList<Song> querySongsOfArtist(String artistName){
+        Log.d(TAG, "Query Songs Of an Artist");
+        ArrayList<Song> songs = new ArrayList<Song>();
+        ContentResolver resolver = MyApplication.getContext().getContentResolver();
+        Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                MediaStore.Audio.Media.ARTIST + "=?",
+                new String[] {artistName},
+                MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+        Map<Long, String> map = getCoverPathMap();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Song song = new Song();
+            song.setId(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
+            song.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
+            song.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
+            song.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
+            song.setUrl(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))); //路径
+            song.setDuration(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
+            song.setSize(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE)));
+            long albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
+            song.setCover(map.get(albumId));
+            songs.add(song);
+        }
+        cursor.close();
+        return  songs;
+    }
 }
 

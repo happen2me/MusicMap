@@ -1,16 +1,20 @@
 package com.example.android.musicmap;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.*;
 
 import com.example.android.musicmap.AlbumFragment.OnListFragmentInteractionListener;
-import com.example.android.musicmap.Album;
 
 import java.util.List;
 
@@ -23,9 +27,12 @@ public class MyAlbumRecyclerViewAdapter extends RecyclerView.Adapter<MyAlbumRecy
 
     private final List<Album> mAlbumList;
     private final OnListFragmentInteractionListener mListener;
+    private final String TAG = "AlbumRecViewAdapter";
+    private Context mContext;
 
 
-    public MyAlbumRecyclerViewAdapter(List<Album> albums, OnListFragmentInteractionListener listener) {
+    public MyAlbumRecyclerViewAdapter(Context context, List<Album> albums, OnListFragmentInteractionListener listener) {
+        mContext = context;
         mAlbumList = albums;
         mListener = listener;
     }
@@ -34,7 +41,22 @@ public class MyAlbumRecyclerViewAdapter extends RecyclerView.Adapter<MyAlbumRecy
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_album, parent, false);
-        return new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
+        holder.mAlbumCoverImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: listener called");
+                Toast.makeText(MyApplication.getContext(), "Album Click Listener Called", Toast.LENGTH_SHORT);
+                //TODO: fill album onclickListener
+                int position = holder.getAdapterPosition();
+                ArrayList<Song> songs = ReadMusic.querySongsInAlbum(mAlbumList.get(position).getName());
+                Intent intent = new Intent(mContext, DetailsActivity.class);
+                intent.putExtra("album_self", mAlbumList.get(position));
+                intent.putExtra("songs", songs);
+                mContext.startActivity(intent);
+            }
+        });
+        return holder;
     }
 
     @Override

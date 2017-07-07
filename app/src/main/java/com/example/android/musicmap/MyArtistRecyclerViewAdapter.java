@@ -1,15 +1,19 @@
 package com.example.android.musicmap;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.musicmap.ArtistFragment.OnListFragmentInteractionListener;
 import com.example.android.musicmap.Artist;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +26,7 @@ public class MyArtistRecyclerViewAdapter extends RecyclerView.Adapter<MyArtistRe
     private Context mContext;
     private final List<Artist> mArtistList;
     private final OnListFragmentInteractionListener mListener;
+    private final String TAG = "ArtistRecAdapter";
 
     public MyArtistRecyclerViewAdapter(Context context, List<Artist> artistList, OnListFragmentInteractionListener listener) {
         mContext = context;
@@ -33,7 +38,40 @@ public class MyArtistRecyclerViewAdapter extends RecyclerView.Adapter<MyArtistRe
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_artist, parent, false);
-        return new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
+        holder.mArtistName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: ArtistName Click Listener called");
+                //TODO: finish artist listener
+                Intent intent = new Intent(mContext, DetailsActivity.class);
+                int position = holder.getAdapterPosition();
+                Artist artist = mArtistList.get(position);
+                ArrayList<Song> songs = ReadMusic.querySongsOfArtist(artist.getName());
+                intent.putExtra("artist_self", artist);
+                intent.putExtra("songs", songs);
+                //Toast.makeText(mContext, "DETECTED songs " + songs.size() + " of this artist", Toast.LENGTH_SHORT).show();
+                mContext.startActivity(intent);
+            }
+        });
+        holder.mArtistCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: ArtistCount Click Listener called");
+                //TODO: finish artist listener
+                Intent intent = new Intent(mContext, DetailsActivity.class);
+                int position = holder.getAdapterPosition();
+                Artist artist = mArtistList.get(position);
+                ArrayList<Song> songs = ReadMusic.querySongsOfArtist(artist.getName());
+                intent.putExtra("artist_self", artist);
+                intent.putExtra("songs", songs);
+                Log.d(TAG, "DETECTED songs " + songs.size() + " of this artist");
+                //Toast.makeText(mContext, "DETECTED songs " + songs.size() + " of this artist", Toast.LENGTH_SHORT).show();
+                mContext.startActivity(intent);
+            }
+        });
+
+        return holder;
     }
 
     @Override
@@ -50,6 +88,7 @@ public class MyArtistRecyclerViewAdapter extends RecyclerView.Adapter<MyArtistRe
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.mItem);
+
                 }
             }
         });
