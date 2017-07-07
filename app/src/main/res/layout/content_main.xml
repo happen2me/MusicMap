@@ -43,12 +43,11 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="0dp"
         app:layout_constraintTop_toBottomOf="@+id/tab_layout">
 
         <!--//例子-->
