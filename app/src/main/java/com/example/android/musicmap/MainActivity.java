@@ -1,7 +1,9 @@
 package com.example.android.musicmap;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,16 +22,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.MediaController;
+
 
 import com.example.android.musicmap.Album;
 import com.example.android.musicmap.Artist;
 import com.example.android.musicmap.Song;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AlbumFragment.OnListFragmentInteractionListener,
         ArtistFragment.OnListFragmentInteractionListener,
         SongFragment.OnListFragmentInteractionListener{
+    private static final String SONGS = "songs";
+    private static final String PLAY_POS = "play_position";
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolBar;
 
@@ -39,6 +48,9 @@ public class MainActivity extends AppCompatActivity
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
+        setVolumeControlStream(AudioManager.STREAM_MUSIC); //直接控制指定的音频流
+
+
         setContentView(R.layout.activity_main);
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
@@ -52,8 +64,14 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Intent serviceIntent = new Intent(getApplicationContext(), PlaybackService.class);
+                ArrayList<Song> songs = ReadMusic.getSongList();
+                serviceIntent.putParcelableArrayListExtra(SONGS,songs);
+                serviceIntent.putExtra(PLAY_POS, new Random().nextInt(songs.size()));
+                startService(serviceIntent);
+                Intent playerIntent = new Intent(getApplicationContext(), PlayerActivity.class);
+                startActivity(playerIntent);
             }
         });
 
@@ -153,5 +171,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(Song item) {
     }
+
 
 }

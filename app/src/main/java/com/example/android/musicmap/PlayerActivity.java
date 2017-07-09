@@ -1,10 +1,15 @@
 package com.example.android.musicmap;
-
+/*
+ * created by 申源春
+ *  This activity is designed to display music info and control play
+ *  It should be called when click notification and click music piece
+ */
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -25,8 +30,10 @@ import android.widget.SeekBar;
 import com.example.android.musicmap.Song;
 import com.example.android.musicmap.MusicController;
 
-public class PlayerActivity extends AppCompatActivity implements  MediaPlayerControl{
+public class PlayerActivity extends AppCompatActivity{
     private String TAG = "PlayerActivity";
+    private static final String SONGS = "songs";
+    private static final String PLAY_POS = "play_position";
 
     private ImageView mPlayPauseButton;
     private ImageView mNextButton;
@@ -35,37 +42,25 @@ public class PlayerActivity extends AppCompatActivity implements  MediaPlayerCon
     private SeekBar mSeekBar;
 
     private int posToPlay;
-    //added
+
     private PlaybackService mMusicService;
     private boolean mMusicBound = false;
     private Intent playIntent;
     ArrayList<Song> mSongArrayList;
-    private MusicController controller;
-
-    private boolean paused = false;
-    private boolean playbackPaused = false;
 
     @Override
     protected void onPause() {
         super.onPause();
-        mPlayPauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
-        paused = true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(paused){
-            mPlayPauseButton.setImageResource(R.drawable.ic_pause_white_24dp);
-            setController();
-            paused = false;
-        }
     }
 
     @Override
     protected void onStop() {
-        controller.hide();
-        mPlayPauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+        unbindService(musicConnection);
         super.onStop();
     }
 
@@ -74,15 +69,13 @@ public class PlayerActivity extends AppCompatActivity implements  MediaPlayerCon
         public void onServiceConnected(ComponentName name, IBinder service) {
             PlaybackService.MusicBinder binder = (PlaybackService.MusicBinder) service;
             mMusicService = binder.getService();
-            if(mSongArrayList == null){
-                mSongArrayList = ReadMusic.getSongList();
-            }
-            mMusicService.setSongs(mSongArrayList);
-            mMusicService.setSongPos(posToPlay);
-            Log.d(TAG, "onServiceConnected: INITIALISE mMusicService if it's null");
+            mSongArrayList = mMusicService.getSongs();
+            posToPlay = mMusicService.getSongPos();
+            Log.d(TAG, "onServiceConnected: bounded and get playlist");
             mMusicBound = true;
+            //when connected init UI
+            updateUI();
         }
-
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mMusicBound = false;
@@ -92,148 +85,18 @@ public class PlayerActivity extends AppCompatActivity implements  MediaPlayerCon
     @Override
     protected void onStart() { //start the Service instance when the Activity instance starts
         super.onStart();
-        Log.d(TAG, "onStart: try to start music service");
+        Log.d(TAG, "onStart");
         if(playIntent == null){
             playIntent = new Intent(this, PlaybackService.class);
-            startService(playIntent);
-            bindService(playIntent, musicConnection, BIND_AUTO_CREATE); //musicConnection pass musicList
         }
+        bindService(playIntent, musicConnection, BIND_AUTO_CREATE); //bind to get music info and control
     }
 
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: STOP SERVICE");
-        stopService(playIntent);
-        mMusicService = null;
         super.onDestroy();
     }
-
-
-    //mediaControl
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public void seekTo(int pos) {
-        //if(mMusicService != null && mMusicBound)
-        mMusicService.seek(pos);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        if(mMusicService != null && mMusicBound && mMusicService.isPlaying())
-            return true;
-        return false;
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public void start() {
-        //if(mMusicService != null && mMusicBound)
-        mMusicService.startPlay();
-        mAlbumCoverImage.setImageDrawable(Drawable.createFromPath(mMusicService.getPlayingSong().getUrl()));
-        mSeekBar.setMax(mMusicService.getDur());
-        //TODO: check
-        if(playbackPaused){
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
-    }
-
-    @Override
-    public void pause() {
-        //if(mMusicService != null && mMusicBound)
-        mMusicService.pausePlayer();
-        playbackPaused = true;
-        mMusicService.pausePlayer();
-    }
-
-    @Override
-    public int getDuration() {
-        if(mMusicService != null && mMusicBound && mMusicService.isPlaying())
-            return mMusicService.getDur();
-        return 0;
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        if(mMusicService != null && mMusicBound && mMusicService.isPlaying()){
-            return mMusicService.getCurrentPos();
-        }
-        return mMusicService.getCurrentPos();
-    }
-
-    /**
-     * Get the audio session id for the player used by this VideoView. This can be used to
-     * apply audio effects to the audio track of a video.
-     *
-     * @return The audio session, or 0 if there was an error.
-     */
-    @Override
-    public int getAudioSessionId() {
-        return 0;
-    }
-
-    //controllerHelper
-    private void setController(){
-        controller = new MusicController(this);
-        //styleMediaController(controller);
-        controller.setPrevNextListeners(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playNext();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrev();
-            }
-        });
-        controller.setMediaPlayer(this);
-        //TODO: change anchored layout
-        controller.setAnchorView(findViewById(R.id.view_pager));
-
-        Log.d(TAG, "setController: ANCHORVIEW SETTED");
-        controller.setEnabled(true);
-    }
-
-    private void playNext(){
-        mMusicService.playNext();
-        mAlbumCoverImage.setImageDrawable(Drawable.createFromPath(mMusicService.getPlayingSong().getUrl()));
-        if(playbackPaused){
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
-    }
-
-    private void playPrev(){
-        mMusicService.playPrev();
-        if(playbackPaused){
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
-    }
-
-    //added end
 
 
     @Override
@@ -245,32 +108,37 @@ public class PlayerActivity extends AppCompatActivity implements  MediaPlayerCon
         mPrevButton = (ImageView) findViewById(R.id.play_prev);
         mAlbumCoverImage = (ImageView) findViewById(R.id.play_page_album_cover);
         mSeekBar = (SeekBar) findViewById(R.id.play_page_seek_bar);
-        Intent intent = getIntent();
-        mSongArrayList = intent.getParcelableArrayListExtra("songs");
-        posToPlay = intent.getIntExtra("song_position", 0);
 
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playNext();
+                mMusicService.playNext();
+                updateUI();
             }
         });
 
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playPrev();
+                mMusicService.playPrev();
+                updateUI();
             }
         });
 
-        //TODO: finish play pause event
         mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(mMusicService.isPlaying()){
+                    mMusicService.pausePlayer();
+                }
+                else {
+                    mMusicService.startPlay();
+                }
+                updatePlayPauseButton();
             }
         });
 
+        //TODO: sync seek bar
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -280,35 +148,28 @@ public class PlayerActivity extends AppCompatActivity implements  MediaPlayerCon
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                seekTo(seekBar.getProgress());
+                mMusicService.seek(seekBar.getProgress());
             }
         });
+    }
 
-        if(ContextCompat.checkSelfPermission(PlayerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+    private void updateUI(){ //called when change song
+        setTitle(mMusicService.getPlayingSong().getTitle());
+        if(BitmapFactory.decodeFile(mMusicService.getPlayingSong().getCover()) == null){
+            mAlbumCoverImage.setImageResource(R.drawable.default_cd);
+        }else {
+            mAlbumCoverImage.setImageDrawable(Drawable.createFromPath(mMusicService.getPlayingSong().getCover()));
         }
-
-        //add
-        setVolumeControlStream(AudioManager.STREAM_MUSIC); //直接控制指定的音频流
-        setController();
-        //addend
-
+        mSeekBar.setMax(mMusicService.getDur());
+        updatePlayPauseButton();
     }
 
-    private void setSongsToDefault(){
-        mSongArrayList = ReadMusic.getSongList();
-        posToPlay = 0;
-    }
-
-    private void  abaddonedPlayNext(){
-        mMusicService.setSongPos(posToPlay++);
-        mMusicService.playSong();
-        controller.show();
-    }
-
-    private void abaddondedStop(){
-        Log.d(TAG, "onClick stop button: STOP SERVICE");
-        stopService(playIntent);
-        mMusicService = null;
+    private void updatePlayPauseButton(){
+        if(mMusicService.isPlaying()){
+            mPlayPauseButton.setImageResource(R.drawable.ic_pause_white_24dp);
+        }
+        else {
+            mPlayPauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+        }
     }
 }

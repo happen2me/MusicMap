@@ -3,6 +3,7 @@ package com.example.android.musicmap;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecycl
     private Context mContext;
     private final List<Song> mSongList;
     private final OnListFragmentInteractionListener mListener;
+    private static final String SONGS = "songs";
+    private static final String PLAY_POS = "play_position";
 
     public MySongRecyclerViewAdapter(Context context, List<Song> songList, OnListFragmentInteractionListener listener) {
         mContext = context;
@@ -43,43 +46,53 @@ public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecycl
             public void onClick(View v) {
                 //TODO: finish song listener
                 //TODO: 随便找位置写的，catch java.io.FileNotFoundException, 替换成默认专辑封面
-                Intent intent = new Intent(mContext, PlayerActivity.class);
-                intent.putExtra("songs",(ArrayList)mSongList);
-                intent.putExtra("play_position", holder.getAdapterPosition());
-                mContext.startActivity(intent);
-            }
-        });
-        holder.mCoverImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "Triggle play page", Toast.LENGTH_SHORT);
-                Intent intent = new Intent(mContext, PlayerActivity.class);
-                intent.putExtra("songs",(ArrayList)mSongList);
-                intent.putExtra("play_position", holder.getAdapterPosition());
-                mContext.startActivity(intent);
-            }
-        });
-        holder.mArtistText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "Triggle play page", Toast.LENGTH_SHORT);
-                Intent intent = new Intent(mContext, PlayerActivity.class);
-                intent.putExtra("songs",(ArrayList)mSongList);
-                intent.putExtra("play_position", holder.getAdapterPosition());
-                mContext.startActivity(intent);
-            }
-        });
-        holder.mNameText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "Triggle play page", Toast.LENGTH_SHORT);
-                Intent intent = new Intent(mContext, PlayerActivity.class);
-                intent.putExtra("songs",(ArrayList)mSongList);
-                intent.putExtra("play_position", holder.getAdapterPosition());
-                mContext.startActivity(intent);
+                Intent serviceIntent = new Intent(mContext, PlaybackService.class);
+                serviceIntent.putParcelableArrayListExtra(SONGS,(ArrayList<Song>)mSongList);
+                serviceIntent.putExtra(PLAY_POS, holder.getAdapterPosition());
+                mContext.startService(serviceIntent);
+                Intent playerIntent = new Intent(mContext, PlayerActivity.class);
+                playerIntent.putParcelableArrayListExtra(SONGS, (ArrayList<Song>) mSongList);
+                mContext.startActivity(playerIntent);
             }
         });
 
+        holder.mCoverImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(mContext, PlaybackService.class);
+                serviceIntent.putParcelableArrayListExtra(SONGS,(ArrayList<Song>)mSongList);
+                serviceIntent.putExtra(PLAY_POS, holder.getAdapterPosition());
+                mContext.startService(serviceIntent);
+                Intent playerIntent = new Intent(mContext, PlayerActivity.class);
+                playerIntent.putParcelableArrayListExtra(SONGS, (ArrayList<Song>) mSongList);
+                mContext.startActivity(playerIntent);
+            }
+        });
+
+        holder.mNameText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(mContext, PlaybackService.class);
+                serviceIntent.putParcelableArrayListExtra(SONGS,(ArrayList<Song>)mSongList);
+                serviceIntent.putExtra(PLAY_POS, holder.getAdapterPosition());
+                mContext.startService(serviceIntent);
+                Intent playerIntent = new Intent(mContext, PlayerActivity.class);
+                playerIntent.putParcelableArrayListExtra(SONGS, (ArrayList<Song>) mSongList);
+                mContext.startActivity(playerIntent);
+            }
+        });
+
+        holder.mArtistText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(mContext, PlaybackService.class);
+                serviceIntent.putParcelableArrayListExtra(SONGS,(ArrayList<Song>)mSongList);
+                serviceIntent.putExtra(PLAY_POS, holder.getAdapterPosition());
+                mContext.startService(serviceIntent);
+                Intent playerIntent = new Intent(mContext, PlayerActivity.class);
+                mContext.startActivity(playerIntent);
+            }
+        });
         return holder;
     }
 

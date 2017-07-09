@@ -1,5 +1,6 @@
 package com.example.android.musicmap;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -13,8 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class DetailsActivity extends AppCompatActivity implements SongFragment.OnListFragmentInteractionListener {
+    private static final String SONGS = "songs";
+    private static final String PLAY_POS = "play_position";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +32,14 @@ public class DetailsActivity extends AppCompatActivity implements SongFragment.O
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Intent serviceIntent = new Intent(getApplicationContext(), PlaybackService.class);
+                ArrayList<Song> songs = getIntent().getParcelableArrayListExtra("songs");
+                serviceIntent.putParcelableArrayListExtra(SONGS,songs);
+                serviceIntent.putExtra(PLAY_POS, new Random().nextInt(songs.size()));
+                startService(serviceIntent);
+                Intent playerIntent = new Intent(getApplicationContext(), PlayerActivity.class);
+                startActivity(playerIntent);
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
