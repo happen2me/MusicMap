@@ -3,6 +3,7 @@
           package="com.example.android.musicmap">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:name=".MyApplication"
@@ -37,6 +38,9 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
+        <activity android:name=".PlayerActivity">
+        </activity>
     </application>
 
 </manifest>
