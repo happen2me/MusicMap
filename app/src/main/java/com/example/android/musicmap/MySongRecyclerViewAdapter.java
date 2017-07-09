@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.musicmap.SongFragment.OnListFragmentInteractionListener;
 
@@ -42,10 +43,42 @@ public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecycl
             public void onClick(View v) {
                 //TODO: finish song listener
                 //TODO: 随便找位置写的，catch java.io.FileNotFoundException, 替换成默认专辑封面
-                Intent intent = new Intent(mContext, PlaybackService.class);
+                Toast.makeText(mContext, "Triggle play page", Toast.LENGTH_SHORT);
+                Intent intent = new Intent(mContext, PlayerActivity.class);
                 intent.putExtra("play_list",(ArrayList)mSongList);
                 intent.putExtra("play_start_position", holder.getAdapterPosition());
-                mContext.startService(intent);
+                mContext.startActivity(intent);
+            }
+        });
+        holder.mCoverImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Triggle play page", Toast.LENGTH_SHORT);
+                Intent intent = new Intent(mContext, PlayerActivity.class);
+                intent.putExtra("play_list",(ArrayList)mSongList);
+                intent.putExtra("play_start_position", holder.getAdapterPosition());
+                mContext.startActivity(intent);
+            }
+        });
+        holder.mArtistText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Triggle play page", Toast.LENGTH_SHORT);
+                Intent intent = new Intent(mContext, PlayerActivity.class);
+                intent.putExtra("play_list",(ArrayList)mSongList);
+                intent.putExtra("play_start_position", holder.getAdapterPosition());
+                mContext.startActivity(intent);
+            }
+        });
+
+        holder.mNameText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Triggle play page", Toast.LENGTH_SHORT);
+                Intent intent = new Intent(mContext, PlayerActivity.class);
+                intent.putExtra("play_list",(ArrayList)mSongList);
+                intent.putExtra("play_start_position", holder.getAdapterPosition());
+                mContext.startActivity(intent);
             }
         });
         return holder;

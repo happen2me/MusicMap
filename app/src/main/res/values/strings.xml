@@ -9,6 +9,8 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_album_details">AlbumDetailsActivity</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
