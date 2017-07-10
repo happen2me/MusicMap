@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -47,6 +48,9 @@ public class PlayerActivity extends AppCompatActivity{
     private boolean mMusicBound = false;
     private Intent playIntent;
     ArrayList<Song> mSongArrayList;
+
+    private Handler handler;
+    private Runnable mRunnable;
 
     @Override
     protected void onPause() {
@@ -95,6 +99,7 @@ public class PlayerActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: STOP SERVICE");
+        handler.removeCallbacks(mRunnable);
         super.onDestroy();
     }
 
@@ -108,6 +113,20 @@ public class PlayerActivity extends AppCompatActivity{
         mPrevButton = (ImageView) findViewById(R.id.play_prev);
         mAlbumCoverImage = (ImageView) findViewById(R.id.play_page_album_cover);
         mSeekBar = (SeekBar) findViewById(R.id.play_page_seek_bar);
+
+        handler = new Handler();
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if(mMusicService != null && mMusicBound && mSeekBar != null){
+                    mSeekBar.setProgress(mMusicService.getCurrentPos());
+                }
+
+                handler.postDelayed(this, 50);
+            }
+
+        };
+        handler.postDelayed(mRunnable, 50);
 
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override

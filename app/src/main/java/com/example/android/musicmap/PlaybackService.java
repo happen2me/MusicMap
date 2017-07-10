@@ -1,9 +1,13 @@
 package com.example.android.musicmap;
 
+import android.*;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
 
@@ -18,17 +22,25 @@ import java.util.Random;
 import android.media.AudioManager;
 import android.os.Binder;
 import android.os.PowerManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
 
 public class PlaybackService extends Service implements
         MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener,
-        AudioManager.OnAudioFocusChangeListener{
+        AudioManager.OnAudioFocusChangeListener {
 
     private final String TAG = "PlaybackService";
     private static final String SONGS = "songs";
     private static final String PLAY_POS = "play_position";
+    private static final String SP_FILENAME = "location_music_info";
     private static final int NOTIFY_ID = 1;
     private MediaPlayer mPlayer;
     private ArrayList<Song> mSongs;
@@ -36,6 +48,9 @@ public class PlaybackService extends Service implements
     private final IBinder musicBind = new MusicBinder();
     private boolean shuffle = false;
     private Random rand;
+    private int mBound;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Gson gson;
     Notification.Builder mBuilder;
 
     public PlaybackService() {
@@ -50,6 +65,11 @@ public class PlaybackService extends Service implements
         mBuilder = new Notification.Builder(this);
         mPlayer = new MediaPlayer();
         rand = new Random();
+        mBound = 0;
+        gson = new Gson();
+        if (MyApplication.isGooglePlayServicesAvailable()) {
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        }
         AudioManager audioManager = (AudioManager) MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
         audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         initMusicPlayer();
@@ -105,6 +125,7 @@ public class PlaybackService extends Service implements
     @Override
     public IBinder onBind(Intent intent) {
         // Return the communication channel to the service.
+        mBound++;
         return musicBind;
     }
 
@@ -122,6 +143,11 @@ public class PlaybackService extends Service implements
      */
     @Override
     public boolean onUnbind(Intent intent) {
+        //call stopSelf at a proper time
+        mBound--;
+        if (mBound <= 0 && !mPlayer.isPlaying()) {
+            stopSelf();
+        }
         return false;
     }
 
@@ -133,11 +159,12 @@ public class PlaybackService extends Service implements
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.d(TAG, "onCompletion");
-        if(mPlayer.getCurrentPosition() > 0){
+        if (mSongPos == mSongs.size() - 1) {
+            pausePlayer();
+        } else if (mSongPos > 0) {
             mp.reset();
             playNext();
-        }
-        else {
+        } else {
             //TODO: finish last song event
         }
     }
@@ -172,7 +199,7 @@ public class PlaybackService extends Service implements
         super.onDestroy();
     }
 
-    public void initMusicPlayer(){ //set player properties
+    public void initMusicPlayer() { //set player properties
         mPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC); //
         mPlayer.setOnPreparedListener(this);
@@ -196,7 +223,7 @@ public class PlaybackService extends Service implements
     @Override
     public void onAudioFocusChange(int focusChange) {
         //TODO: complete react
-        switch (focusChange){
+        switch (focusChange) {
             case AudioManager.AUDIOFOCUS_LOSS:
                 mPlayer.pause();
                 break;
@@ -205,26 +232,40 @@ public class PlaybackService extends Service implements
     }
 
 
-
-    public class MusicBinder extends Binder{
-        public PlaybackService getService(){
+    public class MusicBinder extends Binder {
+        public PlaybackService getService() {
             return PlaybackService.this;
         }
     }
 
-    private void playSong(){
+    private void playSong() {
         mPlayer.reset();
         Song song = mSongs.get(mSongPos);
-        try{
+        try {
             mPlayer.setDataSource(song.getUrl());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "playSong: Error setting data resource", e);
         }
         mPlayer.prepareAsync(); //to prepare
 
         showForegroundNotification();
         mPlayer.start();
+
+        //write location and music info to device
+        if (mFusedLocationClient != null) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                //add location info to database
+                                SharedPreferences.Editor editor = getSharedPreferences(SP_FILENAME, MODE_PRIVATE).edit();
+                                editor.putString(location.getProvider(), gson.toJson(getPlayingSong()));
+                                editor.apply();
+                            }
+                        });
+            }
+        }
     }
 
     public void setSongPos(int position){

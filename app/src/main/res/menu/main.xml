@@ -6,4 +6,14 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_shuffle_play_all"
+        android:title="@string/shuffle_play_all"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_order_play_all"
+        android:title="@string/order_play_all"
+        app:showAsAction="never"/>
 </menu>
