@@ -2,6 +2,7 @@ package com.example.android.musicmap;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
@@ -100,7 +101,12 @@ public class MySongRecyclerViewAdapter extends RecyclerView.Adapter<MySongRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mSongList.get(position);
         Song song = mSongList.get(position);
-        holder.mCoverImage.setImageDrawable(Drawable.createFromPath(song.getCover()));
+        if(BitmapFactory.decodeFile(song.getCover()) == null){
+            holder.mCoverImage.setImageResource(R.drawable.default_cd);
+        }
+        else {
+            holder.mCoverImage.setImageDrawable(Drawable.createFromPath(song.getCover()));
+        }
         holder.mNameText.setText(song.getTitle());
         holder.mArtistText.setText(song.getArtist());
 

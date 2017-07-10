@@ -14,6 +14,7 @@
     <string name="share">Share</string>
     <string name="shuffle_play_all">Play all song in shuffle</string>
     <string name="order_play_all">Play all song in order</string>
+    <string name="read_media_denied">Read external storage permission denied</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -103,4 +104,5 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="title_activity_music_map">Map</string>
 </resources>

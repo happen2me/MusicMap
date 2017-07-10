@@ -16,7 +16,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DetailsActivity extends AppCompatActivity implements SongFragment.OnListFragmentInteractionListener {
+public class DetailsActivity extends BaseActivity implements SongFragment.OnListFragmentInteractionListener {
     private static final String SONGS = "songs";
     private static final String PLAY_POS = "play_position";
 

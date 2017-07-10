@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +32,7 @@ import android.widget.SeekBar;
 import com.example.android.musicmap.Song;
 import com.example.android.musicmap.MusicController;
 
-public class PlayerActivity extends AppCompatActivity{
+public class PlayerActivity extends BaseActivity{
     private String TAG = "PlayerActivity";
     private static final String SONGS = "songs";
     private static final String PLAY_POS = "play_position";
@@ -113,6 +114,12 @@ public class PlayerActivity extends AppCompatActivity{
         mPrevButton = (ImageView) findViewById(R.id.play_prev);
         mAlbumCoverImage = (ImageView) findViewById(R.id.play_page_album_cover);
         mSeekBar = (SeekBar) findViewById(R.id.play_page_seek_bar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        Log.d(TAG, "onCreate: ActionBar == null? " + (actionBar == null));
+
 
         handler = new Handler();
         mRunnable = new Runnable() {
@@ -185,10 +192,10 @@ public class PlayerActivity extends AppCompatActivity{
 
     private void updatePlayPauseButton(){
         if(mMusicService.isPlaying()){
-            mPlayPauseButton.setImageResource(R.drawable.ic_pause_white_24dp);
+            mPlayPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_white_24dp);
         }
         else {
-            mPlayPauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+            mPlayPauseButton.setImageResource(R.drawable.ic_play_circle_filled_white_24dp);
         }
     }
 }

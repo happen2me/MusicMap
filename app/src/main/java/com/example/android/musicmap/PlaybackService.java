@@ -3,7 +3,6 @@ package com.example.android.musicmap;
 import android.*;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +29,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
+
+import org.litepal.crud.DataSupport;
 
 public class PlaybackService extends Service implements
         MediaPlayer.OnPreparedListener,
@@ -253,15 +254,21 @@ public class PlaybackService extends Service implements
 
         //write location and music info to device
         if (mFusedLocationClient != null) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mFusedLocationClient.getLastLocation()
                         .addOnSuccessListener(new OnSuccessListener<Location>() {
                             @Override
                             public void onSuccess(Location location) {
+                                Log.d(TAG, "Is the location null? " + (location==null));
                                 //add location info to database
-                                SharedPreferences.Editor editor = getSharedPreferences(SP_FILENAME, MODE_PRIVATE).edit();
-                                editor.putString(location.getProvider(), gson.toJson(getPlayingSong()));
-                                editor.apply();
+
+                                LocMusicBind locMusicBind = new LocMusicBind();
+                                locMusicBind.setLatitude(location.getLatitude());
+                                locMusicBind.setLongitudeGson(location.getLongitude());
+                                locMusicBind.setSongGson(gson.toJson(getPlayingSong()));
+                                locMusicBind.save();
+                                Log.d(TAG, "Successfully write a song location info into database: " + "(" + location.getLatitude() + "," + location.getLongitude() + ")");
+                                Log.d(TAG, "Now database have " + DataSupport.findAll(LocMusicBind.class).size());
                             }
                         });
             }

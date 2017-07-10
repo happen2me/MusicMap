@@ -86,6 +86,9 @@ public class ReadMusic {
         ArrayList<Album> albums = new ArrayList<>();
 
         ContentResolver resolver = MyApplication.getContext().getContentResolver();
+        if(ContextCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            Log.d(TAG, "getAlbums: ");
+        }
         Cursor cursor = resolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null,
                 null, null, MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
