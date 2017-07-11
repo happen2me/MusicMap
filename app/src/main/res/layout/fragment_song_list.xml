@@ -9,4 +9,7 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.android.musicmap.SongFragment"
-    tools:listitem="@layout/fragment_song"/>
+    tools:listitem="@layout/fragment_song"
+    android:scrollbars="vertical"
+    android:scrollbarStyle="outsideOverlay"
+    android:paddingStart="@dimen/song_padding_start"/>

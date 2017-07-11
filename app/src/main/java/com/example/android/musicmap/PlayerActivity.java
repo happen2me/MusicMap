@@ -20,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,8 @@ import java.util.List;
 import android.widget.ImageView;
 import android.widget.MediaController.MediaPlayerControl;
 import android.widget.SeekBar;
+import android.widget.TextView;
+
 import com.example.android.musicmap.Song;
 import com.example.android.musicmap.MusicController;
 
@@ -42,6 +45,8 @@ public class PlayerActivity extends BaseActivity{
     private ImageView mPrevButton;
     private ImageView mAlbumCoverImage;
     private SeekBar mSeekBar;
+    private TextView mCurrentPos;
+    private TextView mMaxLength;
 
     private int posToPlay;
 
@@ -114,6 +119,10 @@ public class PlayerActivity extends BaseActivity{
         mPrevButton = (ImageView) findViewById(R.id.play_prev);
         mAlbumCoverImage = (ImageView) findViewById(R.id.play_page_album_cover);
         mSeekBar = (SeekBar) findViewById(R.id.play_page_seek_bar);
+        mCurrentPos = (TextView) findViewById(R.id.current_pos) ;
+        mMaxLength = (TextView) findViewById(R.id.max_length);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -127,6 +136,7 @@ public class PlayerActivity extends BaseActivity{
             public void run() {
                 if(mMusicService != null && mMusicBound && mSeekBar != null){
                     mSeekBar.setProgress(mMusicService.getCurrentPos());
+                    mCurrentPos.setText(msToMin(mMusicService.getCurrentPos()));
                 }
 
                 handler.postDelayed(this, 50);
@@ -187,15 +197,27 @@ public class PlayerActivity extends BaseActivity{
             mAlbumCoverImage.setImageDrawable(Drawable.createFromPath(mMusicService.getPlayingSong().getCover()));
         }
         mSeekBar.setMax(mMusicService.getDur());
+        mMaxLength.setText(msToMin(mMusicService.getDur()));
         updatePlayPauseButton();
     }
 
     private void updatePlayPauseButton(){
         if(mMusicService.isPlaying()){
-            mPlayPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_white_24dp);
+            mPlayPauseButton.setImageResource(R.drawable.ic_pause_white_24dp);
         }
         else {
-            mPlayPauseButton.setImageResource(R.drawable.ic_play_circle_filled_white_24dp);
+            mPlayPauseButton.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+        }
+    }
+
+    private String msToMin(int ms){
+        int min = ms/1000/60;
+        int second = ms/1000%60;
+        if(second < 10){
+            return min + ":0" + second;
+        }
+        else{
+            return min + ":" + second;
         }
     }
 }

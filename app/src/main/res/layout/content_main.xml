@@ -20,7 +20,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tabBackground="@color/colorPrimary"
         app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/white">
+        app:tabTextColor="@color/darker_white"
+        app:elevation="10dp"
+        app:tabIndicatorColor="@android:color/white"
+        >
 
         <!--<android.support.design.widget.TabItem-->
             <!--android:layout_width="wrap_content"-->
@@ -45,10 +48,14 @@
         android:id="@+id/view_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:paddingTop="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tab_layout">
+        app:layout_constraintTop_toBottomOf="@+id/tab_layout"
+        app:backgroundTint="@color/darker_white">
 
         <!--//例子-->
         <!--<android.support.v4.view.PagerTitleStrip-->

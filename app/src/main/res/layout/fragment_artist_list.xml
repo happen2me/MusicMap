@@ -9,4 +9,6 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.android.musicmap.ArtistFragment"
-    tools:listitem="@layout/fragment_artist"/>
+    tools:listitem="@layout/fragment_artist"
+    android:scrollbars="vertical"
+    android:paddingStart="@dimen/artist_padding_start"/>
